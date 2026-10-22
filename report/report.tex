@@ -1,0 +1,586 @@
+\documentclass[11pt,a4paper]{article}
+
+% ----------------------------------
+% Packages
+% ----------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,top=2.1cm,bottom=2.1cm,left=2.25cm,right=2.25cm]{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{float}
+
+% ----------------------------------
+% Document information
+% ----------------------------------
+\newcommand{\DocumentType}{Operating Systems Project Report}
+\newcommand{\ProjectTitle}{Introduction to Linux Kernel Modules}
+\newcommand{\CourseName}{CSE 323: Operating Systems}
+\newcommand{\UniversityName}{Zagazig University}
+\newcommand{\FacultyName}{Faculty of Engineering}
+\newcommand{\DepartmentName}{Computer and Systems Engineering Department}
+\newcommand{\AuthorName}{Youssef Reda}
+\newcommand{\AcademicYear}{2026}
+
+% ----------------------------------
+% Colors and hyperlinks
+% ----------------------------------
+\definecolor{primary}{RGB}{25,55,95}
+\definecolor{secondary}{RGB}{75,95,120}
+\definecolor{linkblue}{RGB}{35,85,155}
+\definecolor{codebg}{RGB}{247,248,250}
+\definecolor{codeframe}{RGB}{210,216,224}
+
+% ----------------------------------
+% Code listings
+% ----------------------------------
+\lstset{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{codebg},
+    frame=single,
+    rulecolor=\color{codeframe},
+    framesep=7pt,
+    xleftmargin=4pt,
+    xrightmargin=4pt,
+    aboveskip=8pt,
+    belowskip=8pt,
+    breaklines=true,
+    breakatwhitespace=false,
+    columns=fullflexible,
+    keepspaces=true,
+    showstringspaces=false,
+    tabsize=4,
+    captionpos=b
+}
+
+\lstdefinestyle{terminal}{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{codebg},
+    frame=single,
+    rulecolor=\color{codeframe},
+    framesep=7pt,
+    breaklines=true,
+    columns=fullflexible,
+    keepspaces=true
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    urlcolor=linkblue,
+    citecolor=primary,
+    pdftitle={\ProjectTitle\space - \DocumentType},
+    pdfauthor={\AuthorName}
+}
+
+\urlstyle{same}
+
+% ----------------------------------
+% Paragraphs, lists, and headings
+% ----------------------------------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\setlist[itemize]{
+    leftmargin=1.5em,
+    itemsep=2pt,
+    topsep=3pt
+}
+
+\setlist[enumerate]{
+    leftmargin=1.8em,
+    itemsep=2pt,
+    topsep=3pt
+}
+
+\titleformat{\section}
+    {\Large\bfseries\color{primary}}{}{0pt}{}
+
+\titleformat{\subsection}
+    {\large\bfseries\color{secondary}}{}{0pt}{}
+
+\titleformat{\subsubsection}
+    {\normalsize\bfseries}{}{0pt}{}
+
+\titlespacing*{\section}{0pt}{16pt}{6pt}
+\titlespacing*{\subsection}{0pt}{11pt}{4pt}
+\titlespacing*{\subsubsection}{0pt}{8pt}{3pt}
+
+% Unnumbered headings included in the Table of Contents
+\newcommand{\nsection}[1]{%
+    \section*{#1}%
+    \phantomsection%
+    \addcontentsline{toc}{section}{#1}%
+}
+
+\newcommand{\nsubsection}[1]{%
+    \subsection*{#1}%
+    \phantomsection%
+    \addcontentsline{toc}{subsection}{#1}%
+}
+
+\newcommand{\nsubsubsection}[1]{%
+    \subsubsection*{#1}%
+    \phantomsection%
+    \addcontentsline{toc}{subsubsection}{#1}%
+}
+
+% ----------------------------------
+% Screenshot helper
+% ----------------------------------
+% Usage:
+% \screenshot{assets/image-name.png}{Caption}
+\newcommand{\screenshot}[2]{%
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.92\textwidth,height=0.48\textheight,keepaspectratio]{#1}
+        \caption{#2}
+    \end{figure}
+}
+
+% ----------------------------------
+% Header and footer
+% ----------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{secondary}{Operating Systems Project}}
+\fancyhead[R]{\small\textit{Linux Kernel Modules}}
+\fancyfoot[C]{\thepage}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+
+\begin{document}
+
+% ----------------------------------
+% Cover page
+% ----------------------------------
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+
+    \vspace*{1.2cm}
+
+    {\Large\bfseries\color{primary}\UniversityName\par}
+    \vspace{0.25cm}
+    {\large\FacultyName\par}
+    {\large\DepartmentName\par}
+
+    \vspace{1.4cm}
+
+    {\Large\bfseries\color{secondary}\CourseName\par}
+    \vspace{0.8cm}
+
+    {\Huge\bfseries\color{primary}\ProjectTitle\par}
+
+    \vspace{0.6cm}
+    {\large Programming Project \#1\par}
+
+    \vspace{2cm}
+
+    \begin{center}
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabular}{|p{6.5cm}|p{3.5cm}|}
+            \hline
+            \textbf{Name}                & \textbf{Code}  \\
+            \hline
+            Youssef Reda Elsayed Mouawad & 20812023100544 \\
+            \hline
+        \end{tabular}
+    \end{center}
+
+    \vfill
+
+    \begin{flushleft}
+        \centering
+        \textbf{Academic Year}\\
+        \vspace{0.4cm}
+        \AcademicYear
+    \end{flushleft}
+\end{titlepage}
+
+% ==================================
+% Table of contents
+% ==================================
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+% ==================================
+% 1. Introduction
+% ==================================
+\nsection{Introduction to Linux Kernel Modules}
+
+\vspace{0.5cm}
+\nsubsection{Project Overview}
+
+Linux kernel modules are pieces of code that can be loaded into
+and removed from a running Linux kernel without rebuilding or
+restarting the entire operating system. They provide a practical
+way to extend kernel functionality and interact with kernel
+facilities.
+
+The objective of this project is to gain practical experience
+with Linux kernel module development, compilation, loading,
+removal, and communication with user space through the
+\texttt{/proc} virtual filesystem.
+
+The project implements three modules:
+
+\begin{itemize}
+    \item \textbf{proc-hello:} Creates a \texttt{/proc/hello}
+          entry that returns a greeting message.
+    \item \textbf{proc-jiffies:} Creates a \texttt{/proc/jiffies}
+          entry that reports the current value of the kernel's
+          \texttt{jiffies} counter.
+    \item \textbf{proc-seconds:} Creates a \texttt{/proc/seconds}
+          entry that reports the elapsed time in seconds since the
+          module was loaded.
+\end{itemize}
+
+\vspace{0.5cm}
+\nsubsection{Module Initialization and Cleanup}
+
+A kernel module typically defines two functions: an initialization
+function and a cleanup function.
+
+\begin{itemize}
+    \item \textbf{Initialization:} Runs when the module is loaded.
+          It performs the required setup and returns zero on success.
+    \item \textbf{Cleanup:} Runs when the module is removed.
+          It releases resources allocated by the module, such as entries
+          created in the \texttt{/proc} filesystem.
+\end{itemize}
+
+The \texttt{module\_init()} and \texttt{module\_exit()} macros
+register these functions with the kernel. Kernel messages can be
+written using \texttt{pr\_info()} or \texttt{printk()} and inspected
+with the \texttt{dmesg} command.
+
+\vspace{0.5cm}
+\nsubsection{Compilation Using Make}
+
+External kernel modules are commonly compiled using the kernel
+build system, known as Kbuild. Each module directory contains
+a Makefile that specifies the module's object file and invokes
+the build system.
+
+The following commands illustrate the build process:
+
+\begin{lstlisting}[style=terminal]
+make
+make clean
+\end{lstlisting}
+
+The \texttt{make} command compiles the module against the build
+files for the running kernel. The \texttt{make clean} command
+removes generated build artifacts.
+
+\newpage
+\nsubsection{Loading, Inspecting, and Removing Modules}
+
+The following commands are used to manage a compiled module.
+Run them from the directory containing the corresponding
+\texttt{.ko} file.
+
+\begin{lstlisting}[style=terminal]
+sudo insmod proc_hello.ko
+lsmod
+dmesg | tail
+sudo rmmod proc_hello
+\end{lstlisting}
+
+\begin{itemize}
+    \item \texttt{insmod} inserts a compiled module into the kernel.
+    \item \texttt{lsmod} lists currently loaded kernel modules.
+    \item \texttt{dmesg} displays messages from the kernel log buffer.
+    \item \texttt{rmmod} removes a loaded module.
+\end{itemize}
+
+The module name passed to \texttt{rmmod} is the module's name,
+not the filename with the \texttt{.ko} extension. Administrative
+privileges are generally required to load and remove modules.
+
+\vspace{0.5cm}
+\nsubsection{The /proc Filesystem}
+
+The \texttt{/proc} filesystem is a virtual filesystem that provides
+an interface for accessing selected kernel and process information.
+Its entries are generated dynamically and do not behave like
+ordinary files stored on disk.
+
+A kernel module can create a \texttt{/proc} entry and provide a
+read callback that is invoked when a user-space program reads it.
+For example:
+
+\begin{lstlisting}[style=terminal]
+cat /proc/hello
+\end{lstlisting}
+
+In the implemented modules, the callback prepares a message in
+kernel memory and uses \texttt{copy\_to\_user()} to transfer the
+data to a user-space buffer. The module's cleanup function removes
+the corresponding \texttt{/proc} entry.
+
+\vspace{0.5cm}
+\nsubsection{Jiffies and the HZ Constant}
+
+The kernel maintains a counter named \texttt{jiffies}, which
+represents timer ticks since system boot. The \texttt{HZ} constant
+defines the configured number of timer ticks per second.
+
+The elapsed time in seconds can therefore be calculated using:
+
+\begin{lstlisting}
+elapsed_seconds = (jiffies - start_jiffies) / HZ;
+\end{lstlisting}
+
+Here, \texttt{start\_jiffies} stores the counter value captured
+when the module is loaded. Subtracting it from the current
+counter gives the number of ticks elapsed during the module's
+lifetime. Dividing by \texttt{HZ} converts the result to seconds.
+
+% ==================================
+% 2. proc-hello
+% ==================================
+\newpage
+\nsection{Module 1: proc-hello}
+
+\vspace{0.5cm}
+\nsubsection{Objective}
+
+The purpose of this module is to create a \texttt{/proc/hello}
+entry that returns a fixed greeting message whenever it is read.
+This module demonstrates the basic interaction between a kernel
+module and a user-space application through the \texttt{/proc}
+filesystem.
+
+\vspace{0.5cm}
+\nsubsection{Implementation}
+
+During initialization, the module creates the \texttt{/proc/hello}
+entry and registers a read callback using \texttt{proc\_create()}
+and \texttt{struct proc\_ops}. If creation fails, initialization
+returns an error.
+
+When the entry is read, the callback prepares the greeting message
+and copies it to the user-space buffer using \texttt{copy\_to\_user()}.
+The file position is updated to indicate that the message has
+been consumed. During cleanup, the entry is removed.
+
+\vspace{0.5cm}
+\nsubsection{Compilation and Execution}
+
+Run the following commands from the \texttt{modules/proc-hello}
+directory:
+
+\begin{lstlisting}[style=terminal]
+make
+sudo insmod proc_hello.ko
+cat /proc/hello
+sudo rmmod proc_hello
+\end{lstlisting}
+
+The expected output of the read operation is:
+
+\begin{lstlisting}[style=terminal]
+Hello from the Linux Kernel via /proc!
+\end{lstlisting}
+
+The module can also be inspected through the kernel log:
+
+\begin{lstlisting}[style=terminal]
+dmesg | tail
+\end{lstlisting}
+
+\newpage
+\nsubsection{Testing and Results}
+
+The module was built and loaded into the running kernel. Reading
+\texttt{/proc/hello} returned the expected greeting message.
+After removing the module, the corresponding \texttt{/proc} entry
+was removed as part of the cleanup process.
+
+\vspace{1cm}
+
+\screenshot{../assets/proc-hello.png}
+{Testing the proc-hello module and reading its /proc entry.}
+
+% ==================================
+% 3. proc-jiffies
+% ==================================
+\newpage
+\nsection{Module 2: proc-jiffies}
+
+\vspace{0.5cm}
+\nsubsection{Objective}
+
+The purpose of this module is to create a \texttt{/proc/jiffies}
+entry that reports the current value of the kernel's
+\texttt{jiffies} counter when the entry is read.
+
+\vspace{0.5cm}
+\nsubsection{Implementation}
+
+The module uses the kernel's jiffies-related definitions to access
+the current counter value. Its initialization function creates
+the \texttt{/proc/jiffies} entry and registers the read callback.
+
+When a user-space application reads the entry, the callback
+formats the current counter value as text and transfers it to
+user space. The cleanup function removes the entry when the
+module is unloaded.
+
+The value of \texttt{jiffies} increases as timer ticks occur.
+Consequently, reading the entry at different times may return
+different values.
+
+\vspace{0.5cm}
+\nsubsection{Compilation and Execution}
+
+Run the following commands from the
+\texttt{modules/proc-jiffies} directory:
+
+\begin{lstlisting}[style=terminal]
+make
+sudo insmod proc_jiffies.ko
+cat /proc/jiffies
+cat /proc/jiffies
+sudo rmmod proc_jiffies
+\end{lstlisting}
+
+The output is a numeric value representing the current
+\texttt{jiffies} counter. The exact value depends on the system's
+uptime and timer activity, so it should not be hard-coded in
+the report.
+
+\newpage
+\nsubsection{Testing and Results}
+
+The module was compiled and loaded successfully. Reading
+\texttt{/proc/jiffies} returned the current counter value, allowing
+the kernel's timer-tick counter to be observed from user space.
+The entry was designed to be removed when the module is unloaded.
+
+\vspace{1cm}
+
+\screenshot{../assets/proc-jiffies.png}
+{Testing the proc-jiffies module and displaying the current counter.}
+
+% ==================================
+% 4. proc-seconds
+% ==================================
+\newpage
+\nsection{Module 3: proc-seconds}
+
+\vspace{0.5cm}
+\nsubsection{Objective}
+
+The purpose of this module is to create a \texttt{/proc/seconds}
+entry that reports the number of seconds elapsed since the
+module was loaded.
+
+\vspace{0.5cm}
+\nsubsection{Implementation}
+
+The module stores the value of \texttt{jiffies} at initialization
+in a variable named \texttt{start\_jiffies}. Whenever the
+\texttt{/proc/seconds} entry is read, the callback calculates
+the difference between the current counter and the stored
+starting value.
+
+The elapsed time is calculated using:
+
+\begin{lstlisting}
+elapsed_seconds = (jiffies - start_jiffies) / HZ;
+\end{lstlisting}
+
+The subtraction gives the number of timer ticks since the module
+was loaded, and division by \texttt{HZ} converts that difference
+to seconds. The result is formatted as text and returned to
+user space. The module removes the \texttt{/proc/seconds} entry
+during cleanup.
+
+\vspace{0.5cm}
+\nsubsection{Compilation and Execution}
+
+Run the following commands from the
+\texttt{modules/proc-seconds} directory:
+
+\begin{lstlisting}[style=terminal]
+make
+sudo insmod proc_seconds.ko
+cat /proc/seconds
+sleep 2
+cat /proc/seconds
+sudo rmmod proc_seconds
+\end{lstlisting}
+
+The reported value should generally increase as time passes.
+Because the calculation uses integer division, the value changes
+in whole seconds rather than continuously.
+
+\newpage
+\nsubsection{Testing and Results}
+
+The module was compiled and loaded successfully. Reading
+\texttt{/proc/seconds} reported the elapsed time since loading.
+Reading it again after a delay demonstrated the change in elapsed
+time. The module's cleanup function removes its \texttt{/proc}
+entry when the module is unloaded.
+
+\vspace{1cm}
+
+\screenshot{../assets/proc-seconds.png}
+{Testing the proc-seconds module and observing elapsed time.}
+
+% ==================================
+% 5. Conclusion
+% ==================================
+\newpage
+\nsection{Conclusion}
+
+\vspace{0.5cm}
+
+This project provided practical experience with developing and
+managing Linux kernel modules. The three modules demonstrated
+how to register initialization and cleanup functions, compile
+kernel code using Kbuild, load and remove modules, and inspect
+kernel messages.
+
+The project also demonstrated how a module can expose information
+to user space through the \texttt{/proc} filesystem. The
+\texttt{proc-hello} module returned a fixed message,
+\texttt{proc-jiffies} exposed the current timer-tick counter, and
+\texttt{proc-seconds} used the difference between two counter
+values to calculate elapsed time.
+
+Overall, the project reinforced the importance of correct resource
+management and careful testing when working with kernel code,
+which executes within the operating system's privileged environment.
+
+% ==================================
+% References
+% ==================================
+\newpage
+\nsection{References}
+
+\begin{enumerate}
+    \item Abraham Silberschatz, Peter B. Galvin, and Greg Gagne,
+          \textit{Operating System Concepts}, 10th Edition,
+          Chapter 2, Programming Project: Introduction to Linux Kernel Modules.
+
+    \item Linux Kernel Documentation,
+          \href{https://docs.kernel.org/}{The Linux Kernel Documentation}.
+\end{enumerate}
+
+\end{document}
