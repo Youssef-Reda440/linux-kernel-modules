@@ -6,7 +6,7 @@ The repository demonstrates fundamental Linux kernel programming concepts throug
 
 ---
 
-## Project Overview
+## Overview
 
 Linux kernel modules are pieces of code that can be loaded into and removed from a running Linux kernel without rebuilding or restarting the entire kernel. They provide a flexible way to extend kernel functionality and explore operating system internals.
 
@@ -14,7 +14,7 @@ This project focuses on developing and managing kernel modules, understanding th
 
 ---
 
-## Project Objectives
+## Objectives
 
 - Understand the fundamentals of Linux kernel module development.
 - Implement module initialization and cleanup routines.
@@ -80,7 +80,7 @@ Refer to the documentation for the specific module you want to build and run.
 
 ---
 
-## Project Report
+## Report
 
 The project report documents the fundamentals of Linux kernel modules and describes the implementation and behavior of the three modules.
 
